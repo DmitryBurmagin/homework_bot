@@ -6,10 +6,12 @@ import requests
 import telegram
 
 from config import PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID
-from exceptions import (TokenNotFoundError,
-                        HttpStatusError,
-                        ResponseApiError,
-                        HomeworkStatusError)
+from exceptions import (
+    TokenNotFoundError,
+    HttpStatusError,
+    ResponseApiError,
+    HomeworkStatusError
+)
 
 
 logging.basicConfig(
@@ -65,7 +67,9 @@ def get_api_answer(timestamp: int) -> dict:
             params=params
         )
     except requests.RequestException as re:
-        logging.error(f'Ошибка при запросе к API: {re}')
+        msg = f'Ошибка при запросе к API: {re}'
+        logging.error(msg)
+        raise ResponseApiError(msg)
 
     if homework_statuses.status_code != HTTPStatus.OK:
         raise HttpStatusError(
@@ -134,7 +138,6 @@ def main():
                     timestamp = response.get('current_date')
         except Exception as error:
             logging.error(f'Сбой в работе программы: {error}')
-            time.sleep(RETRY_PERIOD)
         finally:
             time.sleep(RETRY_PERIOD)
 
